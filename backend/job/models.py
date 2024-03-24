@@ -78,7 +78,7 @@ class Job(models.Model):
         choices=Experience.choices,
         default=Experience.NewGraduate
     )
-    salary=models.IntField(default=1,validators=[MinValueValidator(1),MaxValueValidator(9999999999)])
+    salary=models.IntegerField(default=1,validators=[MinValueValidator(1),MaxValueValidator(9999999999)])
     positions=models.IntegerField(default=1)
     company=models.CharField(max_length=100,null=True)
     point=gismodels.PointField(default=Point(0.0,0.0))

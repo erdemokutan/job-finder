@@ -1,9 +1,11 @@
 from django.shortcuts import render
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes  
 from rest_framework.response import Response
 from rest_framework import status
 from django.db.models import Avg,Min,Max,Count
 from rest_framework.pagination import PageNumberPagination
+
+from rest_framework.permissions import IsAuthenticated
 
 from .serializer import JobSerializer
 from .models import Job
@@ -42,7 +44,9 @@ def getJob(request,pk):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def newJob(request):
+    request.data['user']=request.user
     data=request.data
 
     job=Job.objects.create(**data)
@@ -51,8 +55,12 @@ def newJob(request):
     return Response(serializer.data)
 
 @api_view(['PUT'])
+@permission_classes([IsAuthenticated])
 def updateJob(request,pk):
     job=get_object_or_404(Job,id=pk)
+
+    if job.user != request.user:
+        return Response({'message':'You Can Not Update This Job!'},status=status.HTTP_403_FORBIDDEN)
 
     job.title=request.data['title']
     job.description=request.data['description']
@@ -73,8 +81,12 @@ def updateJob(request,pk):
 
 
 @api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
 def deleteJob(request,pk):
     job=get_object_or_404(Job,id=pk)
+
+    if job.user != request.user:
+        return Response({'message':'You Can Not Delete This Job!'},status=status.HTTP_403_FORBIDDEN)
 
     job.delete()
 
@@ -100,3 +112,5 @@ def getTopicStats(request,topic):
     )
 
     return Response(stats)
+
+

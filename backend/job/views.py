@@ -7,7 +7,7 @@ from rest_framework.pagination import PageNumberPagination
 
 from rest_framework.permissions import IsAuthenticated
 
-from .serializer import JobSerializer
+from .serializers import JobSerializer
 from .models import Job
 
 from django.shortcuts import get_object_or_404
